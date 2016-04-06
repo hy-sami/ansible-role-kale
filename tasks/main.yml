@@ -1,0 +1,29 @@
+---
+# tasks file for ansible-role-kale/
+
+- name: Creates /home dir (if it doesn't exist)
+  file: path=/home state=directory mode=0755
+
+- name: Creates /scratch dir (if it doesn't exist)
+  file: path=/scratch state=directory mode=0755
+
+- name: Creates nfs mount dirs (if they doesn't exist)
+  file: path="{{item}}" state=directory mode=0755
+  with_items: "{{ nfs_mount_point }}"
+  when: nfs_mount_point is defined
+
+
+- name: cleanning previous entries on /etc/fstab
+  lineinfile: backup=yes dest=/etc/fstab regexp="^.*\b(nfs4|home)\b.*$" line="{{ nfs_mount }}" state=absent
+  when: nfs_mount is defined
+
+- name: populate /etc/fstab file with NFS mount points
+  lineinfile: dest=/etc/fstab line="{{ nfs_mount }}" state=present
+  when: nfs_mount is defined
+
+- name: cleanning blank lines on /etc/fstab
+  lineinfile: backup=no dest=/etc/fstab regexp="^\s*$" state=absent
+  when: nfs_mount is defined
+
+- name: reloading mount points
+  command: /usr/bin/mount -a

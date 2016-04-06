@@ -1,0 +1,20 @@
+---
+# defaults file for ansible-role-nfs_mount/
+# #Define something like this:
+#
+#
+#
+#
+#nfs_mount_point:
+#  - /tmp/home
+#  - /tmp/scratch
+#  - /tmp/data0
+#  - /tmp/data1 
+#
+# nfs_mount: |
+#  10.2.1.5:/scratch /scratch                nfs4 defaults 0 0
+#  10.2.1.5:/home    /home                   nfs4 defaults 0 0
+#  10.2.1.6:/data0 /data0                nfs4 defaults 0 0
+#  10.2.1.6:/data1 /data1                nfs4 defaults 0 0
+
+#
