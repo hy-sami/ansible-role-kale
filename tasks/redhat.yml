@@ -29,24 +29,38 @@
 - name: Configure ldap integration with AD
   template: backup=yes src=ldap.conf.j2 dest=/etc/openldap/ldap.conf
             owner=root group=root mode=0644
-  notify: restart_nscd
 
 # nsswitch
 - name: Configure nsswitch integration with AD
-  template: backup=yes src=nswitch.conf.j2 dest=/etc/nsswitch.conf
+  template: backup=yes src=nsswitch.conf.j2 dest=/etc/nsswitch.conf
             owner=root group=root mode=0644
 
 
 # pam sshd
 - name: Configure pam sshd integration with AD
-  template: backup=yes src=sshd.conf.j2 dest=/etc/pam.d/sshd
+  template: backup=yes src=sshd.j2 dest=/etc/pam.d/sshd
             owner=root group=root mode=0644
+
+
+# Add AD domains hosts 
+- name: cleanning previous entries on /etc/hosts
+  lineinfile: backup=yes dest=/etc/hosts regexp="^.*\b(ForestDnsZones)\b.*$" line="{{ ad_hosts }}" state=absent
+  when: ad_hosts is defined
+
+- name: populate /etc/hosts file with AD hosts
+  lineinfile: dest=/etc/hosts line="{{ ad_hosts }}" state=present
+  when: ad_hosts is defined
+
+- name: cleanning blank lines on /etc/hosts
+  lineinfile: backup=no dest=/etc/hosts regexp="^\s*$" state=absent
+  when: ad_hosts is defined
+
+
 
 # user creation with pam module
 
 - name: copy user creation script
-  template: backup=yes src=aduser.sh.j2 dest={{ pamexec_script }}
-
+  template: backup=yes src=aduser.sh.j2 dest={{ pamexec_script }} owner=root group=root mode=0755
 
 - name: sssd enabled and running
   service:
@@ -54,9 +68,5 @@
     enabled: true
     state: running
 
-- name: nscd enabled and running
-  service:
-    name: "{{ nscd_service }}"
-    enabled: true
-    state: running
+
 

@@ -3,38 +3,76 @@
 function checknumber() {
    re='^[0-9]+$'
    if ! [[ $uid =~ $re ]] ; then
+   log "Error: '$uid' not a number! Exit."
    echo "Error: '$uid' not a number! Exit." >&2; exit 1
    fi   
 }
 
+log() {
+   logger -t "$0" "[$$] $*"
+}
+
+log "Starting: $0 "
+
+# Get arguments
 username=$1
 uid=$2
 
 if [ $1X == 'X' ]; then
      echo "Usage:$0 [username]  [uid]"
+     log "Exit. No username."
      exit 1
 fi
 
 if [ $2X == 'X' ]; then
      echo "Usage:$0 [username]  [uid]"
+     log "Exit. No Uid."
      exit 1
 fi
 
+# Check that uid is a number
 checknumber
 
 # Add group
-groupadd --gid $uid $username
+log "Adding group $username. [$uid]"
+resp="$(groupadd --gid $uid $username)"
+echo "$resp"
+log "$resp"
+
 # Add user
-useradd -u $uid -g $username $username
+log "Adding user $username. [$uid]"
+resp="$(useradd -u $uid -g $username $username)"
+echo "$resp"
+log "$resp"
+
 # enable account
-usermod -p '*' $username
+log "Enabling  $username. [$uid]"
+resp="$(usermod -p '*' $username)"
+echo "$resp"
+log "$resp"
 
 # Add user to slurm users
-sacctmgr -i add user name=$username account=local
+log "Adding  $username to slurm users"
+resp="$(sacctmgr -i add user name=$username account=local)"
+echo "$resp"
+log "$resp"
 
-# Create /scratch/$username directory
-mkdir /scratch/$username
-chown $username.$username /scratch/$username
+# Creating scratch /scratch/$username directory
+log "Creating  /scratch/$username."
+resp="$(mkdir /scratch/$username)"
+echo "$resp"
+log "$resp"
+
+# Change directory permissions
+log "Changing permissions."
+resp="$(chown $username.$username /scratch/$username)"
+echo "$resp"
+log "$resp"
 
 #update nis
-make -C /var/yp
+resp="$(make -C /var/yp)"
+echo "$resp"
+log "$resp"
+
+log "$username created."
+

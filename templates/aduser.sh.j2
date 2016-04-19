@@ -1,7 +1,4 @@
-# SM 14.4.2016: this scripts is called from pam session authentication module
-# to add user information to NIS server.
-# This script is inspired by ad-home-link.sh. Thanks to JJ (21.3.2013) and  mjr (18.4.2013)
-
+#!/bin/bash
 log() {
    logger -t "$0" "[$$] $*"
 }
@@ -38,6 +35,6 @@ fi
 # If we came up to here, let's run the script on install node to create
 # luser, lgroups, slurm luser and /scratch/luser directory 
 
-log "All ok call ssh -l root {{siteName}}-install.{{siteDomain}} {{ user_create_script }} $PAM_USER $uid"
-resp="$(ssh -l root {{siteName}}-install.{{siteDomain}} {{ user_create_script }} $PAM_USER $uid)"
+log "All ok call ssh -l root {{siteName}}-install.{{ intDomain }}.{{siteDomain}} {{ user_create_script }} $PAM_USER $uid"
+resp="$(ssh -l root {{siteName}}-install.{{ intDomain }}.{{siteDomain}} {{ user_create_script }} $PAM_USER $uid)"
 log "$resp"

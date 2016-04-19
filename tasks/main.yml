@@ -26,10 +26,10 @@
 
 # actual configuration for NSS and PAM should be in another module to allow flexibility with other authentication methods
 
-- include: redhat.yml
-  when: adauth_kale_enabled and ansible_os_family == "RedHat"
 
 - name: copy user creation script
-  template: backup=yes src=createuser.sh.j2  dest={{user_create_script }}
+  template: backup=yes src=createuser.sh.j2  dest={{user_create_script }} owner=root group=root mode=0755
   when: user_create_script_enabled is defined
 
+- include: redhat.yml
+  when: adauth_kale_enabled is defined  and ansible_os_family == "RedHat"
