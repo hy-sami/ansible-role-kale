@@ -1,0 +1,43 @@
+# SM 14.4.2016: this scripts is called from pam session authentication module
+# to add user information to NIS server.
+# This script is inspired by ad-home-link.sh. Thanks to JJ (21.3.2013) and  mjr (18.4.2013)
+
+log() {
+   logger -t "$0" "[$$] $*"
+}
+
+log "Starting: PAM_SERVICE=$PAM_SERVICE PAM_USER=$PAM_USER PAM_TYPE=$PAM_TYPE"
+
+if [ "$PAM_TYPE" != "open_session" ]; then
+  log "exiting, PAM_TYPE != open_session"
+  exit 0
+fi
+
+# Check that we have a uid we like
+uid="$(id -u "$PAM_USER")"
+if [ "x$uid" == "x" ] || [ $uid -lt 1000 ]; then
+  log "Ignoring uid=$uid";
+  exit 0
+fi
+# Check home directory location
+if ! getent passwd $PAM_USER | egrep -q ":/home/$PAM_USER:[^:]+$"; then
+  log "Ignoring $PAM_USER: home directory not /home/luser"
+  exit 0
+fi
+
+
+
+# Check if user is already in NIS
+if ypcat passwd|egrep -q "$PAM_USER:[^:]+$";then
+  log "Ignoring $PAM_USER: Already in NIS"
+  exit 0
+fi
+
+
+
+# If we came up to here, let's run the script on install node to create
+# luser, lgroups, slurm luser and /scratch/luser directory 
+
+log "All ok call ssh -l root {{siteName}}-install.{{siteDomain}} {{ user_create_script }} $PAM_USER $uid"
+resp="$(ssh -l root {{siteName}}-install.{{siteDomain}} {{ user_create_script }} $PAM_USER $uid)"
+log "$resp"

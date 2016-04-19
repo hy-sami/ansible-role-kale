@@ -1,17 +1,12 @@
 ---
-# tasks file for ansible-role-kale/
+# tasks file for roles/ansible-role-kale
 
-- name: Creates /home dir (if it doesn't exist)
-  file: path=/home state=directory mode=0755
-
-- name: Creates /scratch dir (if it doesn't exist)
-  file: path=/scratch state=directory mode=0755
+# nfs mounts
 
 - name: Creates nfs mount dirs (if they doesn't exist)
   file: path="{{item}}" state=directory mode=0755
   with_items: "{{ nfs_mount_point }}"
   when: nfs_mount_point is defined
-
 
 - name: cleanning previous entries on /etc/fstab
   lineinfile: backup=yes dest=/etc/fstab regexp="^.*\b(nfs4|home)\b.*$" line="{{ nfs_mount }}" state=absent
@@ -27,3 +22,14 @@
 
 - name: reloading mount points
   command: /usr/bin/mount -a
+
+
+# actual configuration for NSS and PAM should be in another module to allow flexibility with other authentication methods
+
+- include: redhat.yml
+  when: adauth_kale_enabled and ansible_os_family == "RedHat"
+
+- name: copy user creation script
+  template: backup=yes src=createuser.sh.j2  dest={{user_create_script }}
+  when: user_create_script_enabled is defined
+

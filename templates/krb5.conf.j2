@@ -1,0 +1,52 @@
+[logging]
+ default = FILE:/var/log/krb5.log
+ kdc = FILE:/var/log/kdc.log
+ admin_server = FILE:/var/log/kadmind.log
+
+[libdefaults]
+ default_keytab_name = FILE:/etc/krb5.keytab
+ default_ccache_name = KEYRING:persistent:%{uid}
+ default_realm = {{ adauth_realm | upper }}
+ ticket_lifetime = 24h
+ # AD doesn't allow more
+ renew_lifetime = 7d
+ renewable = true
+ forwardable = true
+ # Limit NetApp EMS error messages
+ udp_preference_limit = 1
+ dns_lookup_realm = false
+ dns_lookup_kdc = false
+
+[realms]
+     {{ adauth_realm | upper}} = {
+    kdc = {{ adauth_realm }}
+    admin_server =  {{ adauth_realm }}
+        kpasswd_protocol = SET_CHANGE
+    }
+
+[domain_realm]
+ {{ siteDomain }} = {{ adauth_realm | upper }}
+ .{{ siteDomain }} = {{ adauth_realm | upper }}
+ {{ adauth_realm }} = {{ adauth_realm | upper }}
+ .{{ adauth_realm }} = {{ adauth_realm | upper }}
+ .{{ intDomain }}.{{ siteDomain }} = {{ adauth_realm | upper }}
+
+
+
+ helsinki.fi = AD.HELSINKI.FI
+ .helsinki.fi = AD.HELSINKI.FI
+ .ad.helsinki.fi = AD.HELSINKI.FI
+ ad.helsinki.fi = AD.HELSINKI.FI
+ .grid.helsinki.fi = AD.HELSINKI.FI
+
+[appdefaults]
+ pam = {
+   debug = false
+   ticket_lifetime = 36000
+   renew_lifetime = 36000
+   forwardable = true
+   krb4_convert = false
+   max_timeout = 3
+   timeout_shift = 2
+   initial_timeout = 1
+ }

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+function checknumber() {
+   re='^[0-9]+$'
+   if ! [[ $uid =~ $re ]] ; then
+   echo "Error: '$uid' not a number! Exit." >&2; exit 1
+   fi   
+}
+
+username=$1
+uid=$2
+
+if [ $1X == 'X' ]; then
+     echo "Usage:$0 [username]  [uid]"
+     exit 1
+fi
+
+if [ $2X == 'X' ]; then
+     echo "Usage:$0 [username]  [uid]"
+     exit 1
+fi
+
+checknumber
+
+# Add group
+groupadd --gid $uid $username
+# Add user
+useradd -u $uid -g $username $username
+# enable account
+usermod -p '*' $username
+
+# Add user to slurm users
+sacctmgr -i add user name=$username account=local
+
+# Create /scratch/$username directory
+mkdir /scratch/$username
+chown $username.$username /scratch/$username
+
+#update nis
+make -C /var/yp

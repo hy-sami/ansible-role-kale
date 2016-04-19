@@ -1,0 +1,47 @@
+#
+# LDAP Defaults
+#
+
+# See ldap.conf(5) for details
+# This file should be world readable but not world writable.
+
+#BASE   dc=example,dc=com
+#URI    ldap://ldap.example.com ldap://ldap-master.example.com:666
+
+#SIZELIMIT      12
+#TIMELIMIT      15
+#DEREF          never
+
+#TLS_CACERTDIR  /etc/openldap/certs
+base {{ ldap_base }}
+uri {{ ldap_uri }}
+#tls_cacertfile /etc/ldap/ldapca.pem
+tls_cacertfile {{ ldap_cacertfile }}
+
+# Turning this off breaks GSSAPI used with krb5 when rdns = false
+SASL_NOCANON    on
+
+# Reconnect policy: hard (default) will retry connecting to
+# the software with exponential backoff, soft will fail
+# immediately.
+bind_policy hard
+
+# Search timelimit
+#timelimit 30
+timelimit 120
+
+# Bind/connect timelimit
+#bind_timelimit 30
+bind_timelimit 120
+
+# Idle timelimit; client will close connections
+# (nss_ldap only) if the server has not been contacted
+# for the number of seconds specified below.
+#idle_timelimit 3600
+idle_timelimit 3600
+
+# Just assume that there are no supplemental groups for these named users
+nss_initgroups_ignoreusers avahi,avahi-autoipd,backup,bin,daemon,dbus,dhcp,games,gdm,gnats,haldaemon,hplip,irc,klog,ldap,libuuid,list,lp,mail,mailman,man,messagebus,named,news,nscd,polkituser,proxy,pulse,radiusd,radvd,root,sshd,sync,sys,syslog,uucp,www-datax,apache,oracle,tomcat,shibd,postgres,mysql,pse_d,pse_ds,pse_dt,pse_gen,zabbix,postfix,httpd
+
+# Netscape SDK LDAPS
+ssl on

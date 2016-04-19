@@ -1,0 +1,65 @@
+
+[sssd]
+config_file_version = 2
+domains = {{ adauth_realm }}
+services = nss, pam
+
+[nss]
+
+[pam]
+
+[domain/{{ adauth_realm }}]
+ldap_id_mapping = false
+ad_domain={{ adauth_realm }}
+dyndns_update = false
+debug_level=4
+# Unless you know you need referrals, turn them off
+ldap_referrals = false
+# Uncomment if you need offline logins
+cache_credentials = true
+enumerate = false
+enum_cache_timeout = 3600
+ldap_user_objectsid  = objectSID
+id_provider = ldap
+auth_provider = krb5
+chpass_provider = none
+access_provider = ldap
+autofs_provider = none
+
+min_id = 1000
+
+# JJ: this means that krb5.keytab is used to get a kerberos ticket to ldap queries
+ldap_sasl_mech = GSSAPI
+# Uncomment and adjust if the default principal host/fqdn@REALM is not available
+#ldap_sasl_authid = nfs/clientad.example.com@AD.EXAMPLE.COM
+
+ldap_schema = rfc2307bis
+
+ldap_user_search_base = {{ ldap_user_search_base }}
+ldap_group_search_base = {{ ldap_group_search_base }}
+ldap_user_name = sAMAccountName
+ldap_group_name = sAMAccountName
+ldap_user_object_class = user
+ldap_user_gecos = gecos
+ldap_user_uid_number = uidNumber
+ldap_user_gid_number = uidNumber
+ldap_user_home_directory = unixHomeDirectory
+
+ldap_user_principal = krbPrincipalName
+
+ldap_group_object_class = group
+
+ldap_access_order = expire
+ldap_account_expire_policy = ad
+ldap_force_upper_case_realm = true
+
+# DNS discovery
+krb5_realm = {{ adauth_realm | upper }}
+# Stop spoofing
+krb5_validate = true 
+# Probably required with sssd 1.8.x and newer
+krb5_canonicalize = false
+krb5_renewable_lifetime = 14d
+krb5_lifetime = 2d
+krb5_renew_interval = 1h
+
