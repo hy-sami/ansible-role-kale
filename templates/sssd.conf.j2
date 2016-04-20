@@ -25,7 +25,8 @@ ldap_user_objectsid  = objectSID
 id_provider = ldap
 auth_provider = krb5
 chpass_provider = none
-access_provider = ldap
+access_provider = simple
+simple_allow_groups = {{ adauth_group }}
 autofs_provider = none
 
 min_id = 1000
