@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+#
 
 [sssd]
 config_file_version = 2
@@ -28,7 +30,7 @@ autofs_provider = none
 
 min_id = 1000
 
-# JJ: this means that krb5.keytab is used to get a kerberos ticket to ldap queries
+# krb5.keytab is used to get a kerberos ticket to ldap queries
 ldap_sasl_mech = GSSAPI
 # Uncomment and adjust if the default principal host/fqdn@REALM is not available
 #ldap_sasl_authid = nfs/clientad.example.com@AD.EXAMPLE.COM
