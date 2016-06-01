@@ -9,6 +9,7 @@
   with_items:
     - adcli
     - sssd-krb5
+    - sssd-ad
     - sssd-ldap
     - sssd-common-pac
     - krb5-workstation

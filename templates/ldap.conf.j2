@@ -13,12 +13,13 @@
 #TIMELIMIT      15
 #DEREF          never
 
-#TLS_CACERTDIR  /etc/openldap/certs
+TLS_CACERTDIR  /etc/openldap/certs
 base {{ ldap_base }}
 uri {{ ldap_uri }}
 #tls_cacertfile /etc/ldap/ldapca.pem
-tls_cacertfile {{ ldap_cacertfile }}
+#tls_cacertfile {{ ldap_cacertfile }}
 
+SSL start_tls
 # Turning this off breaks GSSAPI used with krb5 when rdns = false
 SASL_NOCANON    on
 
