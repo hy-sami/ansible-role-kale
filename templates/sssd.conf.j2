@@ -24,7 +24,7 @@ enum_cache_timeout = 3600
 ldap_user_objectsid  = objectSID
 id_provider = ad
 auth_provider = ad
-chpass_provider = none
+chpass_provider = ad
 access_provider = ad
 ad_access_filter = {{ adauth_group }}
 autofs_provider = none
@@ -47,9 +47,7 @@ ldap_user_gecos = gecos
 ldap_user_uid_number = uidNumber
 ldap_user_gid_number = uidNumber
 ldap_user_home_directory = unixHomeDirectory
-
 ldap_user_principal = krbPrincipalName
-
 ldap_group_object_class = group
 
 ldap_access_order = expire
