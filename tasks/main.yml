@@ -8,9 +8,16 @@
   with_items: "{{ nfs_mount_point }}"
   when: nfs_mount_point is defined
 
-- name: cleanning previous entries on /etc/fstab
-  lineinfile: backup=yes dest=/etc/fstab regexp="^.*\b(nfs4|home)\b.*$" line="{{ nfs_mount }}" state=absent
-  when: nfs_mount is defined
+
+- name: cleanning previous nfs0 entries on /etc/fstab
+  lineinfile: backup=yes dest=/etc/fstab regexp=^{{ nfs0_mount_addr }} state=absent
+  when: nfs0_mount_addr is defined
+
+- name: cleanning previous nfs1 entries on /etc/fstab
+  lineinfile: backup=yes dest=/etc/fstab regexp=^{{ nfs1_mount_addr }} state=absent
+  when: nfs1_mount_addr is defined
+
+
 
 - name: populate /etc/fstab file with NFS mount points
   lineinfile: dest=/etc/fstab line="{{ nfs_mount }}" state=present

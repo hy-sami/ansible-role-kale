@@ -47,7 +47,7 @@
 
 # Add AD domains hosts 
 - name: cleanning previous entries on /etc/hosts
-  lineinfile: backup=yes dest=/etc/hosts regexp="^.*\b(ForestDnsZones)\b.*$" line="{{ ad_hosts }}" state=absent
+  lineinfile: backup=yes dest=/etc/hosts regexp="^.*ForestDnsZones.*" state=absent
   when: ad_hosts is defined
 
 - name: populate /etc/hosts file with AD hosts
